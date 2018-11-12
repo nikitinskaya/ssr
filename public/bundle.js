@@ -87,7 +87,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 (0, _reactDom.hydrate)(_react2.default.createElement(
     _reactRouterDom.BrowserRouter,
     null,
-    _react2.default.createElement(_App2.default, { data: window.__INITIAL_DATA__ })
+    _react2.default.createElement(_App2.default, null)
 ), document.getElementById("app"));
 
 /***/ }),
@@ -9685,6 +9685,14 @@ var _routes2 = _interopRequireDefault(_routes);
 
 var _reactRouterDom = __webpack_require__(36);
 
+var _Navbar = __webpack_require__(68);
+
+var _Navbar2 = _interopRequireDefault(_Navbar);
+
+var _NoMatch = __webpack_require__(69);
+
+var _NoMatch2 = _interopRequireDefault(_NoMatch);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
@@ -9710,21 +9718,27 @@ var App = function (_Component) {
             return _react2.default.createElement(
                 "div",
                 null,
-                _routes2.default.map(function (_ref) {
-                    var path = _ref.path,
-                        exact = _ref.exact,
-                        C = _ref.component,
-                        rest = _objectWithoutProperties(_ref, ["path", "exact", "component"]);
+                _react2.default.createElement(_Navbar2.default, null),
+                _react2.default.createElement(
+                    _reactRouterDom.Switch,
+                    null,
+                    _routes2.default.map(function (_ref) {
+                        var path = _ref.path,
+                            exact = _ref.exact,
+                            C = _ref.component,
+                            rest = _objectWithoutProperties(_ref, ["path", "exact", "component"]);
 
-                    return _react2.default.createElement(_reactRouterDom.Route, {
-                        key: path,
-                        path: path,
-                        exact: exact,
-                        render: function render(props) {
-                            return _react2.default.createElement(C, _extends({}, props, rest));
-                        }
-                    });
-                })
+                        return _react2.default.createElement(_reactRouterDom.Route, {
+                            key: path,
+                            path: path,
+                            exact: exact,
+                            render: function render(props) {
+                                return _react2.default.createElement(C, _extends({}, props, rest));
+                            }
+                        });
+                    }),
+                    _react2.default.createElement(_reactRouterDom.Route, { component: _NoMatch2.default })
+                )
             );
         }
     }]);
@@ -9742,7 +9756,7 @@ exports.default = App;
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -9760,62 +9774,118 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var Grid = function (_Component) {
-  _inherits(Grid, _Component);
+    _inherits(Grid, _Component);
 
-  function Grid() {
-    _classCallCheck(this, Grid);
+    function Grid(props) {
+        _classCallCheck(this, Grid);
 
-    return _possibleConstructorReturn(this, (Grid.__proto__ || Object.getPrototypeOf(Grid)).apply(this, arguments));
-  }
+        var _this = _possibleConstructorReturn(this, (Grid.__proto__ || Object.getPrototypeOf(Grid)).call(this, props));
 
-  _createClass(Grid, [{
-    key: 'render',
-    value: function render() {
-      var repos = this.props.data;
+        var repos = void 0;
+        if (true) {
+            repos = window.__INITIAL_DATA__;
+            delete window.__INITIAL_DATA__;
+        } else {
+            repos = props.staticContext.data;
+        }
 
-      return _react2.default.createElement(
-        'ul',
-        { style: { display: 'flex', flexWrap: 'wrap' } },
-        repos.map(function (_ref) {
-          var name = _ref.name,
-              owner = _ref.owner,
-              stargazers_count = _ref.stargazers_count,
-              html_url = _ref.html_url;
-          return _react2.default.createElement(
-            'li',
-            { key: name, style: { margin: 30 } },
-            _react2.default.createElement(
-              'ul',
-              null,
-              _react2.default.createElement(
-                'li',
-                null,
-                _react2.default.createElement(
-                  'a',
-                  { href: html_url },
-                  name
-                )
-              ),
-              _react2.default.createElement(
-                'li',
-                null,
-                '@',
-                owner.login
-              ),
-              _react2.default.createElement(
-                'li',
-                null,
-                stargazers_count,
-                ' stars'
-              )
-            )
-          );
-        })
-      );
+        _this.state = {
+            repos: repos,
+            loading: repos ? false : true
+        };
+
+        _this.fetchRepos = _this.fetchRepos.bind(_this);
+        return _this;
     }
-  }]);
 
-  return Grid;
+    _createClass(Grid, [{
+        key: 'fetchRepos',
+        value: function fetchRepos(lang) {
+            var _this2 = this;
+
+            this.setState(function () {
+                return {
+                    loading: true
+                };
+            });
+
+            this.props.fetchInitialData(lang).then(function (repos) {
+                return _this2.setState(function () {
+                    return {
+                        repos: repos,
+                        loading: false
+                    };
+                });
+            });
+        }
+    }, {
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(nextProps) {
+            var match = this.props.match;
+
+
+            if (nextProps.match.params.id !== match.params.id) {
+                this.fetchRepos(nextProps.match.params.id);
+            }
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _state = this.state,
+                repos = _state.repos,
+                loading = _state.loading;
+
+            if (loading) {
+                return _react2.default.createElement(
+                    'h1',
+                    null,
+                    'LOADING'
+                );
+            } else {
+                return _react2.default.createElement(
+                    'ul',
+                    { style: { display: 'flex', flexWrap: 'wrap' } },
+                    repos.map(function (_ref) {
+                        var name = _ref.name,
+                            owner = _ref.owner,
+                            stargazers_count = _ref.stargazers_count,
+                            html_url = _ref.html_url;
+                        return _react2.default.createElement(
+                            'li',
+                            { key: name, style: { margin: 30 } },
+                            _react2.default.createElement(
+                                'ul',
+                                null,
+                                _react2.default.createElement(
+                                    'li',
+                                    null,
+                                    _react2.default.createElement(
+                                        'a',
+                                        { href: html_url },
+                                        name
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    'li',
+                                    null,
+                                    '@',
+                                    owner.login
+                                ),
+                                _react2.default.createElement(
+                                    'li',
+                                    null,
+                                    stargazers_count,
+                                    ' stars'
+                                )
+                            )
+                        );
+                    })
+                );
+            }
+        }
+    }]);
+
+    return Grid;
 }(_react.Component);
 
 exports.default = Grid;
@@ -15143,6 +15213,89 @@ if (!self.fetch) {
   self.Headers = Headers;
   self.Request = Request;
   self.Response = Response;
+}
+
+/***/ }),
+/* 68 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = Navbar;
+
+var _react = __webpack_require__(3);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouterDom = __webpack_require__(36);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function Navbar() {
+  var languages = [{
+    name: 'All',
+    param: 'all'
+  }, {
+    name: 'JavaScript',
+    param: 'javascript'
+  }, {
+    name: 'Ruby',
+    param: 'ruby'
+  }, {
+    name: 'Python',
+    param: 'python'
+  }, {
+    name: 'Java',
+    param: 'java'
+  }];
+
+  return _react2.default.createElement(
+    'ul',
+    null,
+    languages.map(function (_ref) {
+      var name = _ref.name,
+          param = _ref.param;
+      return _react2.default.createElement(
+        'li',
+        { key: param },
+        _react2.default.createElement(
+          _reactRouterDom.NavLink,
+          { activeStyle: { fontWeight: 'bold' }, to: '/popular/' + param },
+          name
+        )
+      );
+    })
+  );
+}
+
+/***/ }),
+/* 69 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = NoMatch;
+
+var _react = __webpack_require__(3);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function NoMatch() {
+  return _react2.default.createElement(
+    'div',
+    null,
+    'Four Oh Four'
+  );
 }
 
 /***/ })
