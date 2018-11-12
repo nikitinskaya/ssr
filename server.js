@@ -94,6 +94,10 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _serializeJavascript = __webpack_require__(6);
+
+var _serializeJavascript2 = _interopRequireDefault(_serializeJavascript);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var app = (0, _express2.default)();
@@ -103,8 +107,10 @@ app.use((0, _cors2.default)());
 app.use(_express2.default.static("public"));
 
 app.get("*", function (req, res, next) {
-    var markup = (0, _server.renderToString)(_react2.default.createElement(_App2.default, { data: "Niki" }));
-    res.send("<!DOCTYPE html>\n        <html lang=\"en\">\n        <head>\n          <meta charset=\"UTF-8\">\n          <title>SSR</title>\n          <script src=\"/bundle.js\" defer></script>\n        </head>\n        <body>\n          <div id=\"app\">" + markup + "</div>\n        </body>\n        </html>");
+    var name = "University";
+
+    var markup = (0, _server.renderToString)(_react2.default.createElement(_App2.default, { data: name }));
+    res.send("<!DOCTYPE html>\n        <html lang=\"en\">\n        <head>\n          <meta charset=\"UTF-8\">\n          <title>SSR</title>\n          <script src=\"/bundle.js\" defer></script>\n          <script>window.__INITIAL_DATA__ = " + (0, _serializeJavascript2.default)(name) + "</script>\n        </head>\n        <body>\n          <div id=\"app\">" + markup + "</div>\n        </body>\n        </html>");
 });
 
 app.listen(3010, function () {
@@ -179,6 +185,12 @@ var App = function (_Component) {
 }(_react.Component);
 
 exports.default = App;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+module.exports = require("serialize-javascript");
 
 /***/ })
 /******/ ]);

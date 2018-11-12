@@ -3,6 +3,7 @@ import cors from "cors";
 import { renderToString } from "react-dom/server";
 import App from "../shared/App";
 import React from "react";
+import serialize from "serialize-javascript";
 
 const app = express();
 
@@ -11,8 +12,10 @@ app.use(cors());
 app.use(express.static("public"));
 
 app.get("*", (req, res, next) => {
+        const name = "University";
+
         const markup = renderToString(
-            <App data={"Niki"}/>
+            <App data={name}/>
         )
         res.send(
             `<!DOCTYPE html>
@@ -21,6 +24,7 @@ app.get("*", (req, res, next) => {
           <meta charset="UTF-8">
           <title>SSR</title>
           <script src="/bundle.js" defer></script>
+          <script>window.__INITIAL_DATA__ = ${serialize(name)}</script>
         </head>
         <body>
           <div id="app">${markup}</div>

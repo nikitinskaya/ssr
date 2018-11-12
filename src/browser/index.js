@@ -4,6 +4,6 @@ import App from "../shared/App";
 
 
 hydrate(
-    <App data={"Vera"}/>,
+    <App data={window.__INITIAL_DATA__}/>,
     document.getElementById("app")
 )
