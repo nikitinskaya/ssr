@@ -4,7 +4,8 @@ import { renderToString } from "react-dom/server";
 import App from "../shared/App";
 import React from "react";
 import serialize from "serialize-javascript";
-import { fetchPopularRepos } from "../shared/api"
+import { matchPath } from "react-router-dom";
+import routes from "../shared/routes";
 
 const app = express();
 
@@ -13,13 +14,17 @@ app.use(cors());
 app.use(express.static("public"));
 
 app.get("*", (req, res, next) => {
-        fetchPopularRepos()
-            .then((data) => {
-                const markup = renderToString(
-                    <App data={data}/>
-                )
-                res.send(
-                    `<!DOCTYPE html>
+        const activeRoute = routes.find((route) => matchPath(req.url, route)) || {};
+
+        const promise = activeRoute.fetchInitialData ?
+            activeRoute.fetchInitialData(req.url) : Promise.resolve();
+
+        promise.then((data) => {
+            const markup = renderToString(
+                <App data={data}/>
+            )
+            res.send(
+                `<!DOCTYPE html>
                         <html lang="en">
                         <head>
                             <meta charset="UTF-8">
@@ -31,8 +36,8 @@ app.get("*", (req, res, next) => {
                            <div id="app">${markup}</div>
                          </body>
                          </html>`
-                )
-            })
+            )
+        })
     }
 )
 

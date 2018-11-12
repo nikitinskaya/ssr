@@ -98,7 +98,11 @@ var _serializeJavascript = __webpack_require__(6);
 
 var _serializeJavascript2 = _interopRequireDefault(_serializeJavascript);
 
-var _api = __webpack_require__(7);
+var _reactRouterDom = __webpack_require__(10);
+
+var _routes = __webpack_require__(11);
+
+var _routes2 = _interopRequireDefault(_routes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -109,7 +113,13 @@ app.use((0, _cors2.default)());
 app.use(_express2.default.static("public"));
 
 app.get("*", function (req, res, next) {
-    (0, _api.fetchPopularRepos)().then(function (data) {
+    var activeRoute = _routes2.default.find(function (route) {
+        return (0, _reactRouterDom.matchPath)(req.url, route);
+    }) || {};
+
+    var promise = activeRoute.fetchInitialData ? activeRoute.fetchInitialData(req.url) : Promise.resolve();
+
+    promise.then(function (data) {
         var markup = (0, _server.renderToString)(_react2.default.createElement(_App2.default, { data: data }));
         res.send("<!DOCTYPE html>\n                        <html lang=\"en\">\n                        <head>\n                            <meta charset=\"UTF-8\">\n                            <title>SSR</title>\n                            <script src=\"/bundle.js\" defer></script>\n                            <script>window.__INITIAL_DATA__ = " + (0, _serializeJavascript2.default)(data) + "</script>\n                        </head>\n                         <body>\n                           <div id=\"app\">" + markup + "</div>\n                         </body>\n                         </html>");
     });
@@ -321,6 +331,100 @@ var Grid = function (_Component) {
 }(_react.Component);
 
 exports.default = Grid;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+module.exports = require("react-router-dom");
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _Home = __webpack_require__(12);
+
+var _Home2 = _interopRequireDefault(_Home);
+
+var _Grid = __webpack_require__(9);
+
+var _Grid2 = _interopRequireDefault(_Grid);
+
+var _api = __webpack_require__(7);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var routes = [{
+    path: "/",
+    exact: true,
+    component: _Home2.default
+}, {
+    path: "/popular/:id",
+    component: _Grid2.default,
+    fetchInitialData: function fetchInitialData() {
+        var path = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+        return (0, _api.fetchPopularRepos)(path.split("/").pop());
+    }
+}];
+
+exports.default = routes;
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Home = function (_Component) {
+  _inherits(Home, _Component);
+
+  function Home() {
+    _classCallCheck(this, Home);
+
+    return _possibleConstructorReturn(this, (Home.__proto__ || Object.getPrototypeOf(Home)).apply(this, arguments));
+  }
+
+  _createClass(Home, [{
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'div',
+        null,
+        'Select language'
+      );
+    }
+  }]);
+
+  return Home;
+}(_react.Component);
+
+exports.default = Home;
 
 /***/ })
 /******/ ]);
