@@ -120,7 +120,11 @@ app.get("*", function (req, res, next) {
     var promise = activeRoute.fetchInitialData ? activeRoute.fetchInitialData(req.url) : Promise.resolve();
 
     promise.then(function (data) {
-        var markup = (0, _server.renderToString)(_react2.default.createElement(_App2.default, { data: data }));
+        var markup = (0, _server.renderToString)(_react2.default.createElement(
+            _reactRouterDom.StaticRouter,
+            { location: req.url, context: {} },
+            _react2.default.createElement(_App2.default, { data: data })
+        ));
         res.send("<!DOCTYPE html>\n                        <html lang=\"en\">\n                        <head>\n                            <meta charset=\"UTF-8\">\n                            <title>SSR</title>\n                            <script src=\"/bundle.js\" defer></script>\n                            <script>window.__INITIAL_DATA__ = " + (0, _serializeJavascript2.default)(data) + "</script>\n                        </head>\n                         <body>\n                           <div id=\"app\">" + markup + "</div>\n                         </body>\n                         </html>");
     });
 });
