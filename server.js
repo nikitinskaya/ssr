@@ -103,8 +103,8 @@ app.use((0, _cors2.default)());
 app.use(_express2.default.static("public"));
 
 app.get("*", function (req, res, next) {
-    var markup = (0, _server.renderToString)(_react2.default.createElement(_App2.default, null));
-    res.send("<!DOCTYPE html>\n        <html lang=\"en\">\n        <head>\n          <meta charset=\"UTF-8\">\n          <title>SSR</title>\n        </head>\n        <body>\n          <div id=\"app\">" + markup + "</div>\n        </body>\n        </html>");
+    var markup = (0, _server.renderToString)(_react2.default.createElement(_App2.default, { data: "Niki" }));
+    res.send("<!DOCTYPE html>\n        <html lang=\"en\">\n        <head>\n          <meta charset=\"UTF-8\">\n          <title>SSR</title>\n          <script src=\"/bundle.js\" defer></script>\n        </head>\n        <body>\n          <div id=\"app\">" + markup + "</div>\n        </body>\n        </html>");
 });
 
 app.listen(3010, function () {
@@ -169,7 +169,8 @@ var App = function (_Component) {
             return _react2.default.createElement(
                 "div",
                 null,
-                "Hello World"
+                "Hello ",
+                this.props.data
             );
         }
     }]);

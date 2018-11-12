@@ -12,7 +12,7 @@ app.use(express.static("public"));
 
 app.get("*", (req, res, next) => {
         const markup = renderToString(
-            <App/>
+            <App data={"Niki"}/>
         )
         res.send(
             `<!DOCTYPE html>
@@ -20,6 +20,7 @@ app.get("*", (req, res, next) => {
         <head>
           <meta charset="UTF-8">
           <title>SSR</title>
+          <script src="/bundle.js" defer></script>
         </head>
         <body>
           <div id="app">${markup}</div>
